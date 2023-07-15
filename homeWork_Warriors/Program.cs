@@ -26,13 +26,6 @@ namespace homeWork_Warriors
 
     class Arena
     {
-        private const string CommandSelectKinght = "1";
-        private const string CommandSelectMagican = "2";
-        private const string CommandSelectThief = "3";
-        private const string CommandSelectShieldBearer = "4";
-        private const string CommandSelectVampire = "5";
-        private const string MessageWiner = "Winner {0} warrior";
-
         private List<Warrior> _warriors;
         private Warrior _firstWarrior;
         private Warrior _secondWarrior;
@@ -70,17 +63,19 @@ namespace homeWork_Warriors
 
         private void AnnounceWinner()
         {
+            string messageWiner = "Winner {0} warrior";
+
             if (!_firstWarrior.IsAlive && !_secondWarrior.IsAlive)
             {
                 Console.WriteLine("Drow");
             }
             else if (_firstWarrior.IsAlive)
             {
-                Console.WriteLine(String.Format(MessageWiner, "first"));
+                Console.WriteLine(String.Format(messageWiner, "first"));
             }
             else
             {
-                Console.WriteLine(String.Format(MessageWiner, "second"));
+                Console.WriteLine(String.Format(messageWiner, "second"));
             }
 
             Console.ReadKey();
@@ -96,13 +91,13 @@ namespace homeWork_Warriors
         private Warrior SelectWarrior(string numberWarior)
         {
             Console.WriteLine(String.Format("select {0} warrior: ", numberWarior));
-            Console.WriteLine($"{CommandSelectKinght} - knight");
-            Console.WriteLine($"{CommandSelectMagican} - magican");
-            Console.WriteLine($"{CommandSelectThief} - shieldBearer");
-            Console.WriteLine($"{CommandSelectShieldBearer} - thief");
-            Console.WriteLine($"{CommandSelectVampire} - vampire");
+            
+            for(int i = 0; i < _warriors.Count; i++)
+            {
+                Console.WriteLine($"{i + 1} - {_warriors[i].GetName}");
+            }
 
-            int input = ReadNumber(0, _warriors.Count);
+            int input = ReadNumber(1, _warriors.Count);
             Warrior selectWarrior = _warriors[input - 1].Clone();
             Console.WriteLine($"You select {selectWarrior}");
             Console.ReadKey();
@@ -207,7 +202,7 @@ namespace homeWork_Warriors
             return new Thief(Health, Damage, Armor, _critChance,_bonusCritDamage);
         }
 
-        public override void DealDamage(Warrior Enemy)
+        public override void DealDamage(Warrior enemy)
         {
             int maxCritChance = 100;
             int value = random.Next(maxCritChance);
@@ -215,12 +210,12 @@ namespace homeWork_Warriors
             if (_critChance >= value)
             {
                 int critDamage = Damage + _bonusCritDamage;
-                Console.WriteLine($"{Name} dealt {critDamage} crit damage to {Enemy.GetName}");
-                Enemy.TakeDamage(critDamage);
+                Console.WriteLine($"{Name} dealt {critDamage} crit damage to {enemy.GetName}");
+                enemy.TakeDamage(critDamage);
             }
             else
             {
-                base.DealDamage(Enemy);
+                base.DealDamage(enemy);
             }
         }
     }
@@ -230,6 +225,7 @@ namespace homeWork_Warriors
         private int _amountMans;
         private int _fireballCost;
         private int _fireballDamage;
+
         public Magican(int health, int damage, int armor,int amountMans,int fireballCost,int fireballDamage) : base(health, damage, armor)
         {
             _amountMans = amountMans;
@@ -291,10 +287,10 @@ namespace homeWork_Warriors
     {
         protected static Random random = new Random();
 
+        public string Name { get; private set; }
         protected int Health;
         protected int Damage;
         protected int Armor;
-        protected string Name;
         protected string Description;
 
         public Warrior(int health, int damage, int armor)
@@ -319,10 +315,10 @@ namespace homeWork_Warriors
             Health -= damage;
         }
 
-        public virtual void DealDamage(Warrior Enemy)
+        public virtual void DealDamage(Warrior enemy)
         {
-            Console.WriteLine($"{Name} dealt {Damage} damage to {Enemy.Name}");
-            Enemy.TakeDamage(Damage);
+            Console.WriteLine($"{Name} dealt {Damage} damage to {enemy.Name}");
+            enemy.TakeDamage(Damage);
         }
 
 
